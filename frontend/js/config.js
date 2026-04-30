@@ -7,7 +7,7 @@ const isLocal =
     window.location.hostname === "127.0.0.1";
 
 // 🔥 SET YOUR PRODUCTION URL HERE
-const PROD_API = "https://your-backend-url.onrender.com";
+const PROD_API = "https://fixit-app-x4ew.onrender.com";
 
 // 🔥 OPTIONAL: override manually if needed
 const CUSTOM_API = localStorage.getItem("API_URL");
