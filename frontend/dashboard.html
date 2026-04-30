@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Dashboard - FixIt</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+    <h2><i class="fas fa-wrench"></i> FixIt</h2>
+
+    <div id="nav-links">
+        <a href="index.html" title="Home"><i class="fas fa-home"></i></a>
+        <a href="services.html" title="Services"><i class="fas fa-tools"></i></a>
+        <a href="contact.html" title="Contact"><i class="fas fa-envelope"></i></a>
+        <a href="dashboard.html" title="Dashboard"><i class="fas fa-tachometer-alt"></i></a>
+        <button onclick="logout()" class="btn-outline small">Logout</button>
+    </div>
+</nav>
+
+<section class="container">
+
+<!-- HEADER -->
+<div class="card">
+    <h2><i class="fas fa-tachometer-alt"></i> Dashboard</h2>
+    <p class="muted">Manage your service requests</p>
+</div>
+
+<!-- TOP GRID -->
+<div class="grid grid-2">
+
+    <!-- EARNINGS -->
+    <div class="card">
+        <h3><i class="fas fa-wallet"></i> Earnings</h3>
+        <p id="earnings">₵0 (0 jobs)</p>
+    </div>
+
+    <!-- MAP -->
+    <div class="card">
+        <h3><i class="fas fa-map-marker-alt"></i> Live Tracking</h3>
+        <div id="map" style="height:250px; border-radius:10px; background:#f3f4f6;"></div>
+        <small class="muted">Tracking updates every few seconds</small>
+    </div>
+
+</div>
+
+<!-- NOTIFICATIONS -->
+<div class="card">
+    <h3><i class="fas fa-bell"></i> Notifications</h3>
+    <ul id="notifications">
+        <li class="muted">No notifications yet</li>
+    </ul>
+</div>
+
+<!-- CHAT -->
+<div class="card">
+    <h3><i class="fas fa-comments"></i> Chat</h3>
+
+    <div id="chat-box" class="chat-box"></div>
+
+    <div class="chat-input">
+        <input id="chat-input" placeholder="Type a message...">
+        <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+    </div>
+</div>
+
+<!-- USER PANEL -->
+<div id="user-dashboard">
+
+    <!-- CREATE REQUEST -->
+    <div class="card">
+        <h3><i class="fas fa-plus-circle"></i> Create Request</h3>
+
+        <input id="service" placeholder="Service (e.g. Plumbing)">
+        <input id="desc" placeholder="Describe the problem">
+        <input id="location" placeholder="Your location">
+
+        <button onclick="createRequest(event)" class="btn-primary">
+            Submit Request
+        </button>
+    </div>
+
+    <!-- REQUEST LIST -->
+    <div class="card">
+        <h3><i class="fas fa-list"></i> Your Requests</h3>
+        <ul id="request-list">
+            <li class="muted">No requests yet</li>
+        </ul>
+    </div>
+
+</div>
+
+<!-- TECH PANEL -->
+<div id="tech-dashboard" style="display:none;">
+
+    <div class="card">
+        <h3><i class="fas fa-briefcase"></i> Assigned Jobs</h3>
+        <ul id="jobs"></ul>
+    </div>
+
+    <!-- REVIEW -->
+    <div class="card">
+        <h3><i class="fas fa-star"></i> Rate Service</h3>
+
+        <select id="rating">
+            <option value="5">⭐⭐⭐⭐⭐</option>
+            <option value="4">⭐⭐⭐⭐</option>
+            <option value="3">⭐⭐⭐</option>
+            <option value="2">⭐⭐</option>
+            <option value="1">⭐</option>
+        </select>
+
+        <input id="review" placeholder="Write a review">
+
+        <button onclick="submitReview()" class="btn-primary">
+            Submit Review
+        </button>
+    </div>
+
+</div>
+
+</section>
+
+<!-- SCRIPTS -->
+<script src="https://js.paystack.co/v1/inline.js"></script>
+
+<!-- 🔥 IMPORTANT: Replace with your Google Maps key -->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBYwvkuLjNmaQs1Q5F4ckcmgkevvUnonnQ&callback=initMap" async defer></script>
+
+<script src="js/config.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/dashboard.js"></script>
+
+</body>
+</html>
