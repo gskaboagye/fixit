@@ -2,7 +2,7 @@
 // LOGIN
 // ======================
 async function login(event) {
-    event.preventDefault(); // prevents form reload
+    event.preventDefault();
 
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value.trim();
@@ -12,9 +12,11 @@ async function login(event) {
         return;
     }
 
-    const btn = event.target;
-    btn.innerText = "Logging in...";
-    btn.disabled = true;
+    const btn = event.target.closest("button"); // ✅ FIX BUTTON TARGET
+    if (btn) {
+        btn.innerText = "Logging in...";
+        btn.disabled = true;
+    }
 
     try {
         const res = await fetch(`${API}/login`, {
@@ -25,7 +27,13 @@ async function login(event) {
             body: JSON.stringify({ email, password })
         });
 
-        const data = await res.json();
+        // ✅ HANDLE NON-JSON ERRORS SAFELY
+        let data;
+        try {
+            data = await res.json();
+        } catch {
+            throw new Error("Invalid server response");
+        }
 
         if (!res.ok) {
             alert(data.detail || "Invalid email or password");
@@ -35,22 +43,23 @@ async function login(event) {
         // ✅ SAVE TOKEN
         localStorage.setItem("token", data.access_token);
 
-        // ✅ OPTIONAL: SAVE USER INFO (future use)
+        // ✅ SAVE USER (if returned)
         if (data.user) {
             localStorage.setItem("user", JSON.stringify(data.user));
         }
 
-        // ✅ SUCCESS FEEDBACK
         alert("✅ Login successful");
 
-        // REDIRECT
+        // ✅ REDIRECT
         window.location.href = "dashboard.html";
 
     } catch (err) {
-        console.error(err);
-        alert("Network error. Please try again.");
+        console.error("Login error:", err);
+        alert("❌ Network or server error. Check console.");
     } finally {
-        btn.innerText = "Login";
-        btn.disabled = false;
+        if (btn) {
+            btn.innerText = "Login";
+            btn.disabled = false;
+        }
     }
 }
