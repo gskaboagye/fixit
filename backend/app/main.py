@@ -11,23 +11,31 @@ import app.models
 
 from app.routes import user, payments
 
-# Create tables
-Base.metadata.create_all(bind=engine)
-
 app = FastAPI(title="FixIt API")
 
 # ======================
-# CORS CONFIG (IMPORTANT)
+# CREATE TABLES ON STARTUP (FIXED)
+# ======================
+@app.on_event("startup")
+def on_startup():
+    try:
+        Base.metadata.create_all(bind=engine)
+        print("✅ Database tables created successfully")
+    except Exception as e:
+        print("❌ Error creating tables:", e)
+
+# ======================
+# CORS CONFIG
 # ======================
 origins = [
     "http://localhost:5500",
     "http://127.0.0.1:5500",
-    "https://your-frontend-url.onrender.com"  # 🔥 REPLACE THIS
+    "https://fixit-frontend-r16u.onrender.com"
 ]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,   # ✅ safer than "*"
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
