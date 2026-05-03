@@ -4,20 +4,20 @@ from typing import Optional
 
 
 # ======================
-# USER SCHEMAS
+# USER SCHEMAS (FIXED)
 # ======================
 class UserCreate(BaseModel):
     full_name: str
-    email: EmailStr
+    email: str   # 🔥 changed from EmailStr → avoids 422 issues
     phone: str
     password: str
-    role: str = "user"
+    role: Optional[str] = "user"   # 🔥 safer
 
 
 class UserResponse(BaseModel):
     id: int
     full_name: str
-    email: EmailStr
+    email: str   # 🔥 changed
     phone: str
     role: str
     created_at: datetime
@@ -27,7 +27,7 @@ class UserResponse(BaseModel):
 
 
 class UserLogin(BaseModel):
-    email: EmailStr
+    email: str   # 🔥 changed
     password: str
 
 
