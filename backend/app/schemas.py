@@ -1,25 +1,25 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional
 
 
 # ======================
-# USER SCHEMAS (FIXED)
+# USER SCHEMAS
 # ======================
 class UserCreate(BaseModel):
     full_name: str
-    email: str   # 🔥 changed from EmailStr → avoids 422 issues
+    email: str
     phone: str
     password: str
-    role: Optional[str] = "user"   # 🔥 safer
+    role: Optional[str] = None   # backend will set default
 
 
 class UserResponse(BaseModel):
     id: int
     full_name: str
-    email: str   # 🔥 changed
+    email: str
     phone: str
-    role: str
+    role: Optional[str] = "user"
     created_at: datetime
 
     class Config:
@@ -27,7 +27,7 @@ class UserResponse(BaseModel):
 
 
 class UserLogin(BaseModel):
-    email: str   # 🔥 changed
+    email: str
     password: str
 
 
@@ -54,7 +54,7 @@ class TechnicianResponse(BaseModel):
 
 
 # ======================
-# SERVICE REQUEST
+# SERVICE REQUEST SCHEMAS
 # ======================
 class ServiceRequestCreate(BaseModel):
     service_type: str
@@ -69,10 +69,10 @@ class ServiceRequestResponse(BaseModel):
     location: str
     status: str
 
-    user_id: Optional[int]
-    technician_id: Optional[int]
+    user_id: Optional[int] = None
+    technician_id: Optional[int] = None
 
-    # 🔥 PAYMENT
+    # 💳 PAYMENT
     amount: Optional[float] = 50.0
     payment_reference: Optional[str] = None
 

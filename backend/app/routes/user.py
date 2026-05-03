@@ -2,10 +2,15 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from datetime import datetime
 
-from app import schemas, crud
+from app import schemas
 from app.database import get_db
-from app.security import create_access_token, get_current_user
-from app.models import ChatMessage, Review, TechnicianLocation
+from app.security import (
+    create_access_token,
+    get_current_user,
+    hash_password,
+    verify_password
+)
+from app.models import User, ChatMessage, Review, TechnicianLocation
 
 router = APIRouter()
 
@@ -16,21 +21,49 @@ router = APIRouter()
 
 @router.post("/users", response_model=schemas.UserResponse)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
-    return crud.create_user(db=db, user=user)
+
+    # 🔥 check duplicate email
+    existing = db.query(User).filter(User.email == user.email).first()
+    if existing:
+        raise HTTPException(status_code=400, detail="Email already exists")
+
+    new_user = User(
+        full_name=user.full_name,
+        email=user.email,
+        phone=user.phone,
+        password=hash_password(user.password),  # 🔥 FIX
+        role="user"  # 🔥 FORCE DEFAULT
+    )
+
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+
+    return new_user
 
 
 @router.post("/login")
 def login(user: schemas.UserLogin, db: Session = Depends(get_db)):
-    db_user = crud.authenticate_user(db, user.email, user.password)
+
+    db_user = db.query(User).filter(User.email == user.email).first()
 
     if not db_user:
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+
+    # 🔥 VERY IMPORTANT FIX
+    if not verify_password(user.password, db_user.password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
     token = create_access_token({"sub": str(db_user.id)})
 
     return {
         "access_token": token,
-        "token_type": "bearer"
+        "token_type": "bearer",
+        "user": {   # 🔥 helps frontend
+            "id": db_user.id,
+            "email": db_user.email,
+            "role": db_user.role
+        }
     }
 
 
