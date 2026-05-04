@@ -16,10 +16,7 @@
     <h2><i class="fas fa-wrench"></i> FixIt</h2>
 
     <div id="nav-links">
-        <a href="index.html" title="Home"><i class="fas fa-home"></i></a>
-        <a href="services.html" title="Services"><i class="fas fa-tools"></i></a>
-        <a href="contact.html" title="Contact"><i class="fas fa-envelope"></i></a>
-        <a href="dashboard.html" title="Dashboard"><i class="fas fa-tachometer-alt"></i></a>
+        <a href="index.html"><i class="fas fa-home"></i></a>
         <button onclick="logout()" class="btn-outline small">Logout</button>
     </div>
 </nav>
@@ -45,7 +42,6 @@
     <div class="card">
         <h3><i class="fas fa-map-marker-alt"></i> Live Tracking</h3>
         <div id="map" style="height:250px; border-radius:10px; background:#f3f4f6;"></div>
-        <small class="muted">Tracking updates every few seconds</small>
     </div>
 
 </div>
@@ -58,18 +54,6 @@
     </ul>
 </div>
 
-<!-- CHAT -->
-<div class="card">
-    <h3><i class="fas fa-comments"></i> Chat</h3>
-
-    <div id="chat-box" class="chat-box"></div>
-
-    <div class="chat-input">
-        <input id="chat-input" placeholder="Type a message...">
-        <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
-    </div>
-</div>
-
 <!-- USER PANEL -->
 <div id="user-dashboard">
 
@@ -77,13 +61,16 @@
     <div class="card">
         <h3><i class="fas fa-plus-circle"></i> Create Request</h3>
 
-        <input id="service" placeholder="Service (e.g. Plumbing)">
-        <input id="desc" placeholder="Describe the problem">
-        <input id="location" placeholder="Your location">
+        <!-- ✅ FIX: USE FORM -->
+        <form onsubmit="createRequest(event)">
+            <input id="service" placeholder="Service (e.g. Plumbing)" required>
+            <input id="desc" placeholder="Describe the problem" required>
+            <input id="location" placeholder="Your location" required>
 
-        <button onclick="createRequest(event)" class="btn-primary">
-            Submit Request
-        </button>
+            <button type="submit" class="btn-primary">
+                Submit Request
+            </button>
+        </form>
     </div>
 
     <!-- REQUEST LIST -->
@@ -96,46 +83,35 @@
 
 </div>
 
-<!-- TECH PANEL -->
-<div id="tech-dashboard" style="display:none;">
-
-    <div class="card">
-        <h3><i class="fas fa-briefcase"></i> Assigned Jobs</h3>
-        <ul id="jobs"></ul>
-    </div>
-
-    <!-- REVIEW -->
-    <div class="card">
-        <h3><i class="fas fa-star"></i> Rate Service</h3>
-
-        <select id="rating">
-            <option value="5">⭐⭐⭐⭐⭐</option>
-            <option value="4">⭐⭐⭐⭐</option>
-            <option value="3">⭐⭐⭐</option>
-            <option value="2">⭐⭐</option>
-            <option value="1">⭐</option>
-        </select>
-
-        <input id="review" placeholder="Write a review">
-
-        <button onclick="submitReview()" class="btn-primary">
-            Submit Review
-        </button>
-    </div>
-
-</div>
-
 </section>
 
 <!-- SCRIPTS -->
 <script src="https://js.paystack.co/v1/inline.js"></script>
 
-<!-- 🔥 IMPORTANT: Replace with your Google Maps key -->
+<!-- ⚠️ Keep your key but restrict it in Google Cloud -->
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBYwvkuLjNmaQs1Q5F4ckcmgkevvUnonnQ&callback=initMap" async defer></script>
 
 <script src="js/config.js"></script>
 <script src="js/auth.js"></script>
 <script src="js/dashboard.js"></script>
+
+<!-- ✅ MAP INIT (FIXES ERROR) -->
+<script id="init_map_fix">
+function initMap() {
+    const mapDiv = document.getElementById("map");
+    if (!mapDiv) return;
+
+    const map = new google.maps.Map(mapDiv, {
+        center: { lat: 5.6037, lng: -0.1870 }, // Accra
+        zoom: 12
+    });
+}
+</script>
+
+<!-- ✅ PROTECT PAGE -->
+<script id="protect_page_fix">
+protectPage();
+</script>
 
 </body>
 </html>

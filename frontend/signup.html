@@ -25,29 +25,35 @@
     <h2><i class="fas fa-user-plus"></i> Create Account</h2>
     <p style="color:#6b7280;">Join FixIt today</p>
 
-    <div class="input-group">
-        <i class="fas fa-user"></i>
-        <input id="name" placeholder="Full Name">
-    </div>
+    <!-- ✅ USE FORM -->
+    <form onsubmit="signup(event)">
 
-    <div class="input-group">
-        <i class="fas fa-envelope"></i>
-        <input id="email" placeholder="Email">
-    </div>
+        <div class="input-group">
+            <i class="fas fa-user"></i>
+            <input id="name" type="text" placeholder="Full Name" required>
+        </div>
 
-    <div class="input-group">
-        <i class="fas fa-phone"></i>
-        <input id="phone" placeholder="Phone">
-    </div>
+        <div class="input-group">
+            <i class="fas fa-envelope"></i>
+            <input id="email" type="email" placeholder="Email" required>
+        </div>
 
-    <div class="input-group">
-        <i class="fas fa-lock"></i>
-        <input id="password" type="password" placeholder="Password">
-    </div>
+        <div class="input-group">
+            <i class="fas fa-phone"></i>
+            <input id="phone" type="text" placeholder="Phone" required>
+        </div>
 
-    <button onclick="signup()">
-        Create Account
-    </button>
+        <div class="input-group">
+            <i class="fas fa-lock"></i>
+            <input id="password" type="password" placeholder="Password" required>
+        </div>
+
+        <!-- ✅ BUTTON FIX -->
+        <button type="submit">
+            Create Account
+        </button>
+
+    </form>
 
     <p class="auth-link">
         Already have an account?
