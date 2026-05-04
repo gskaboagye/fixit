@@ -3,45 +3,70 @@
 // ======================
 function updateNavbar() {
     const token = localStorage.getItem("token");
+    const user = getUserSafe();
     const nav = document.getElementById("nav-links");
 
     if (!nav) return;
 
-    // Clear first (prevents duplication)
-    nav.innerHTML = "";
-
-    // Always visible links
-    nav.innerHTML += `
+    let html = `
         <a href="index.html"><i class="fas fa-home"></i></a>
         <a href="services.html"><i class="fas fa-tools"></i></a>
         <a href="contact.html"><i class="fas fa-envelope"></i></a>
     `;
 
-    // Logged-in user
     if (token) {
-        nav.innerHTML += `
+        html += `
             <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i></a>
-            <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i></a>
+            <span class="nav-user">${user?.email || ""}</span>
+            <a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i></a>
         `;
     } else {
-        nav.innerHTML += `
+        html += `
             <a href="login.html"><i class="fas fa-user"></i></a>
         `;
     }
+
+    nav.innerHTML = html;
+
+    // Attach logout event safely
+    const logoutBtn = document.getElementById("logout-btn");
+    if (logoutBtn) {
+        logoutBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            logout();
+        });
+    }
 }
 
+
 // ======================
-// LOGOUT CONFIRMATION
+// SAFE USER PARSE
+// ======================
+function getUserSafe() {
+    try {
+        return JSON.parse(localStorage.getItem("user"));
+    } catch {
+        return null;
+    }
+}
+
+
+// ======================
+// LOGOUT
 // ======================
 function logout() {
     if (confirm("Are you sure you want to logout?")) {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
+
         window.location.href = "login.html";
     }
 }
 
+
 // ======================
-// INIT
+// INIT (SAFE)
 // ======================
-window.onload = updateNavbar;
+document.addEventListener("DOMContentLoaded", () => {
+    updateNavbar();
+});

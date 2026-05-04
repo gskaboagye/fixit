@@ -12,18 +12,20 @@ if (!token) {
 // CREATE REQUEST
 // ======================
 async function createRequest(event) {
-    event.preventDefault();
+    if (event) event.preventDefault();
 
-    const service = document.getElementById("service").value.trim();
-    const desc = document.getElementById("desc").value.trim();
-    const location = document.getElementById("location").value.trim();
+    console.log("🚀 Creating request...");
+
+    const service = document.getElementById("service")?.value.trim();
+    const desc = document.getElementById("desc")?.value.trim();
+    const location = document.getElementById("location")?.value.trim();
 
     if (!service || !desc || !location) {
         alert("All fields required");
         return;
     }
 
-    const btn = event.target.closest("button");
+    const btn = event?.target?.closest("button");
     if (btn) {
         btn.innerText = "Submitting...";
         btn.disabled = true;
@@ -46,6 +48,7 @@ async function createRequest(event) {
         const data = await res.json();
 
         if (!res.ok) {
+            console.error(data);
             alert(data.detail || "Failed to create request");
             return;
         }
@@ -54,8 +57,8 @@ async function createRequest(event) {
         loadRequests();
 
     } catch (err) {
-        console.error("Create request error:", err);
-        alert("Failed to create request");
+        console.error("❌ Create request error:", err);
+        alert("Server error while creating request");
     } finally {
         if (btn) {
             btn.innerText = "Submit Request";
@@ -69,6 +72,8 @@ async function createRequest(event) {
 // LOAD REQUESTS
 // ======================
 async function loadRequests() {
+    console.log("📦 Loading requests...");
+
     try {
         const res = await fetch(`${API}/requests`, {
             headers: { "Authorization": `Bearer ${token}` }
@@ -82,18 +87,20 @@ async function loadRequests() {
         list.innerHTML = "";
 
         if (!Array.isArray(data) || data.length === 0) {
-            list.innerHTML = "<li style='color:#9ca3af;'>No requests yet</li>";
+            list.innerHTML = "<li class='muted'>No requests yet</li>";
             return;
         }
 
         data.forEach(r => {
             const li = document.createElement("li");
 
+            const email = JSON.parse(localStorage.getItem("user"))?.email || "";
+
             let payBtn = "";
 
             if (r.status !== "paid") {
                 payBtn = `
-                    <button onclick="payWithPaystack('${r.email || ""}', ${r.amount || 50}, ${r.id}, '${r.subaccount_code || ""}')">
+                    <button onclick="payWithPaystack('${email}', ${r.amount || 50}, ${r.id}, '${r.subaccount_code || ""}')">
                         💳 Pay
                     </button>
                 `;
@@ -109,7 +116,7 @@ async function loadRequests() {
         });
 
     } catch (err) {
-        console.error("Load requests error:", err);
+        console.error("❌ Load requests error:", err);
     }
 }
 
@@ -130,7 +137,7 @@ function payWithPaystack(email, amount, requestId, subaccountCode) {
     }
 
     const handler = PaystackPop.setup({
-        key: "pk_test_xxxxxxxxx", // 🔥 PUT YOUR REAL PUBLIC KEY
+        key: "pk_test_xxxxxxxxx", // 🔥 PUT YOUR REAL KEY
         email: email,
         amount: amount * 100,
         currency: "GHS",
@@ -139,11 +146,12 @@ function payWithPaystack(email, amount, requestId, subaccountCode) {
         bearer: subaccountCode ? "subaccount" : "account",
 
         callback: function (response) {
+            console.log("💳 Payment success:", response.reference);
             verifyPayment(response.reference, requestId);
         },
 
         onClose: function () {
-            console.log("Payment popup closed");
+            console.log("Payment closed");
         }
     });
 
@@ -171,6 +179,7 @@ async function verifyPayment(reference, requestId) {
         const data = await res.json();
 
         if (!res.ok) {
+            console.error(data);
             alert(data.detail || "Verification failed");
             return;
         }
@@ -179,7 +188,7 @@ async function verifyPayment(reference, requestId) {
         loadRequests();
 
     } catch (err) {
-        console.error("Verify payment error:", err);
+        console.error("❌ Verify payment error:", err);
         alert("Payment verification failed");
     }
 }
@@ -224,9 +233,11 @@ function addNotification(message) {
 
 
 // ======================
-// INIT
+// INIT (SAFE)
 // ======================
-window.onload = function () {
+document.addEventListener("DOMContentLoaded", () => {
+    console.log("🔥 Dashboard loaded");
+
     loadRequests();
     loadEarnings();
-};
+});
